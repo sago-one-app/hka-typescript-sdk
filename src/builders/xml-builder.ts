@@ -19,13 +19,30 @@ export class XmlBuilder {
 
   /**
    * Helper to generate a tag only if the value is defined and not an empty string.
+   * For numeric fields, it ensures 2 decimal places.
    */
-  private static buildTag(tagName: string, value: string | number | undefined, namespace = 'ser'): string {
+  private static buildTag(tagName: string, value: string | number | undefined, options?: { namespace?: string; isAmount?: boolean; pad?: number }): string {
+    const ns = options?.namespace || 'ser';
+    
     if (value === undefined || value === null || value === '') {
+      // Special case: precioUnitarioDescuento must always be present as 0.00
+      if (tagName === 'precioUnitarioDescuento') {
+        return `<${ns}:${tagName}>0.00</${ns}:${tagName}>\n`;
+      }
       return '';
     }
-    const valStr = typeof value === 'string' ? this.escapeXml(value) : value.toString();
-    return `<${namespace}:${tagName}>${valStr}</${namespace}:${tagName}>\n`;
+
+    let valStr: string;
+    if (options?.pad) {
+      valStr = value.toString().padStart(options.pad, '0');
+    } else if (options?.isAmount) {
+      const num = typeof value === 'string' ? parseFloat(value) : value;
+      valStr = isNaN(num) ? '0.00' : num.toFixed(2);
+    } else {
+      valStr = typeof value === 'string' ? this.escapeXml(value) : value.toString();
+    }
+
+    return `<${ns}:${tagName}>${valStr}</${ns}:${tagName}>\n`;
   }
 
   /**
@@ -34,7 +51,7 @@ export class XmlBuilder {
   static buildDocumentoElectronico(doc: DocumentoElectronico): string {
     let xml = '';
     
-    xml += this.buildTag('codigoSucursalEmisor', doc.codigoSucursalEmisor);
+    xml += this.buildTag('codigoSucursalEmisor', doc.codigoSucursalEmisor, { pad: 4 });
     xml += this.buildTag('tipoSucursal', doc.tipoSucursal);
 
     // datosTransaccion
@@ -42,8 +59,8 @@ export class XmlBuilder {
     xml += `<ser:datosTransaccion>\n`;
     xml += this.buildTag('tipoEmision', trx.tipoEmision);
     xml += this.buildTag('tipoDocumento', trx.tipoDocumento);
-    xml += this.buildTag('numeroDocumentoFiscal', trx.numeroDocumentoFiscal);
-    xml += this.buildTag('puntoFacturacionFiscal', trx.puntoFacturacionFiscal);
+    xml += this.buildTag('numeroDocumentoFiscal', trx.numeroDocumentoFiscal, { pad: 10 });
+    xml += this.buildTag('puntoFacturacionFiscal', trx.puntoFacturacionFiscal, { pad: 3 });
     xml += this.buildTag('fechaEmision', trx.fechaEmision);
     xml += this.buildTag('fechaSalida', trx.fechaSalida);
     xml += this.buildTag('fechaInicioContingencia', trx.fechaInicioContingencia);
@@ -60,17 +77,27 @@ export class XmlBuilder {
 
     // cliente
     const cli = trx.cliente;
+    const isExtranjero = cli.tipoClienteFE === '04';
+
     xml += `<ser:cliente>\n`;
     xml += this.buildTag('tipoClienteFE', cli.tipoClienteFE);
-    xml += this.buildTag('tipoContribuyente', cli.tipoContribuyente);
-    xml += this.buildTag('numeroRUC', cli.numeroRUC);
-    xml += this.buildTag('digitoVerificadorRUC', cli.digitoVerificadorRUC);
-    xml += this.buildTag('razonSocial', cli.razonSocial);
-    xml += this.buildTag('direccion', cli.direccion);
-    xml += this.buildTag('codigoUbicacion', cli.codigoUbicacion);
-    xml += this.buildTag('provincia', cli.provincia);
-    xml += this.buildTag('distrito', cli.distrito);
-    xml += this.buildTag('corregimiento', cli.corregimiento);
+    
+    // Rule 4.1.B: Omit RUC/Location for Extranjero
+    if (!isExtranjero) {
+      xml += this.buildTag('tipoContribuyente', cli.tipoContribuyente);
+      xml += this.buildTag('numeroRUC', cli.numeroRUC);
+      xml += this.buildTag('digitoVerificadorRUC', cli.digitoVerificadorRUC);
+      xml += this.buildTag('razonSocial', cli.razonSocial);
+      xml += this.buildTag('direccion', cli.direccion);
+      xml += this.buildTag('codigoUbicacion', cli.codigoUbicacion);
+      xml += this.buildTag('provincia', cli.provincia);
+      xml += this.buildTag('distrito', cli.distrito);
+      xml += this.buildTag('corregimiento', cli.corregimiento);
+    } else {
+      xml += this.buildTag('razonSocial', cli.razonSocial);
+      xml += this.buildTag('direccion', cli.direccion);
+    }
+
     xml += this.buildTag('tipoIdentificacion', cli.tipoIdentificacion);
     xml += this.buildTag('nroIdentificacionExtranjero', cli.nroIdentificacionExtranjero);
     xml += this.buildTag('paisExtranjero', cli.paisExtranjero);
@@ -98,16 +125,16 @@ export class XmlBuilder {
       xml += this.buildTag('fechaFabricacion', item.fechaFabricacion);
       xml += this.buildTag('fechaCaducidad', item.fechaCaducidad);
       xml += this.buildTag('infoInteresItem', item.infoInteresItem);
-      xml += this.buildTag('precioUnitario', item.precioUnitario);
-      xml += this.buildTag('precioUnitarioDescuento', item.precioUnitarioDescuento);
-      xml += this.buildTag('precioItem', item.precioItem);
-      xml += this.buildTag('precioAcarreo', item.precioAcarreo);
-      xml += this.buildTag('precioSeguro', item.precioSeguro);
-      xml += this.buildTag('valorTotal', item.valorTotal);
+      xml += this.buildTag('precioUnitario', item.precioUnitario, { isAmount: true });
+      xml += this.buildTag('precioUnitarioDescuento', item.precioUnitarioDescuento, { isAmount: true });
+      xml += this.buildTag('precioItem', item.precioItem, { isAmount: true });
+      xml += this.buildTag('precioAcarreo', item.precioAcarreo, { isAmount: true });
+      xml += this.buildTag('precioSeguro', item.precioSeguro, { isAmount: true });
+      xml += this.buildTag('valorTotal', item.valorTotal, { isAmount: true });
       xml += this.buildTag('tasaITBMS', item.tasaITBMS);
-      xml += this.buildTag('valorITBMS', item.valorITBMS);
+      xml += this.buildTag('valorITBMS', item.valorITBMS, { isAmount: true });
       xml += this.buildTag('tasaISC', item.tasaISC);
-      xml += this.buildTag('valorISC', item.valorISC);
+      xml += this.buildTag('valorISC', item.valorISC, { isAmount: true });
       xml += this.buildTag('codigoGTIN', item.codigoGTIN);
 
       if (item.medicina) {
@@ -140,7 +167,7 @@ export class XmlBuilder {
         for (const oti of item.listaItemOTI) {
           xml += `<ser:itemOTI>\n`;
           xml += this.buildTag('tasaOTI', oti.tasaOTI);
-          xml += this.buildTag('valorOTI', oti.valorOTI);
+          xml += this.buildTag('valorOTI', oti.valorOTI, { isAmount: true });
           xml += `</ser:itemOTI>\n`;
         }
         xml += `</ser:listaItemOTI>\n`;
@@ -153,26 +180,31 @@ export class XmlBuilder {
     // totalesSubTotales
     const tot = doc.totalesSubTotales;
     xml += `<ser:totalesSubTotales>\n`;
-    xml += this.buildTag('totalPrecioNeto', tot.totalPrecioNeto);
-    xml += this.buildTag('totalITBMS', tot.totalITBMS);
-    xml += this.buildTag('totalISC', tot.totalISC);
-    xml += this.buildTag('totalMontoGravado', tot.totalMontoGravado);
-    xml += this.buildTag('totalDescuento', tot.totalDescuento);
-    xml += this.buildTag('totalAcarreoCobrado', tot.totalAcarreoCobrado);
-    xml += this.buildTag('valorSeguroCobrado', tot.valorSeguroCobrado);
-    xml += this.buildTag('totalFactura', tot.totalFactura);
-    xml += this.buildTag('totalValorRecibido', tot.totalValorRecibido);
-    xml += this.buildTag('vuelto', tot.vuelto);
+    xml += this.buildTag('totalPrecioNeto', tot.totalPrecioNeto, { isAmount: true });
+    xml += this.buildTag('totalITBMS', tot.totalITBMS, { isAmount: true });
+    xml += this.buildTag('totalISC', tot.totalISC, { isAmount: true });
+    xml += this.buildTag('totalMontoGravado', tot.totalMontoGravado, { isAmount: true });
+    xml += this.buildTag('totalDescuento', tot.totalDescuento, { isAmount: true });
+    xml += this.buildTag('totalAcarreoCobrado', tot.totalAcarreoCobrado, { isAmount: true });
+    xml += this.buildTag('valorSeguroCobrado', tot.valorSeguroCobrado, { isAmount: true });
+    xml += this.buildTag('totalFactura', tot.totalFactura, { isAmount: true });
+    xml += this.buildTag('totalValorRecibido', tot.totalValorRecibido, { isAmount: true });
+    
+    // Rule 4.6.C: Vuelto only if > 0
+    if (tot.vuelto && parseFloat(tot.vuelto) > 0) {
+      xml += this.buildTag('vuelto', tot.vuelto, { isAmount: true });
+    }
+
     xml += this.buildTag('tiempoPago', tot.tiempoPago);
-    xml += this.buildTag('nroItems', tot.nroItems);
-    xml += this.buildTag('totalTodosItems', tot.totalTodosItems);
+    xml += this.buildTag('nroItems', doc.listaItems.length); // Rule 3.6.2
+    xml += this.buildTag('totalTodosItems', tot.totalTodosItems, { isAmount: true });
 
     xml += `<ser:listaFormaPago>\n`;
     for (const fp of tot.listaFormaPago) {
       xml += `<ser:formaPago>\n`;
       xml += this.buildTag('formaPagoFact', fp.formaPagoFact);
       xml += this.buildTag('descFormaPago', fp.descFormaPago);
-      xml += this.buildTag('valorCuotaPagada', fp.valorCuotaPagada);
+      xml += this.buildTag('valorCuotaPagada', fp.valorCuotaPagada, { isAmount: true });
       xml += `</ser:formaPago>\n`;
     }
     xml += `</ser:listaFormaPago>\n`;
@@ -182,7 +214,7 @@ export class XmlBuilder {
       for (const pp of tot.listaPagoPlazo) {
         xml += `<ser:pagoPlazo>\n`;
         xml += this.buildTag('fechaVenceCuota', pp.fechaVenceCuota);
-        xml += this.buildTag('valorCuota', pp.valorCuota);
+        xml += this.buildTag('valorCuota', pp.valorCuota, { isAmount: true });
         xml += `</ser:pagoPlazo>\n`;
       }
       xml += `</ser:listaPagoPlazo>\n`;
@@ -193,7 +225,7 @@ export class XmlBuilder {
       for (const oti of tot.listaTotalOTI) {
         xml += `<ser:totalOTI>\n`;
         xml += this.buildTag('tasaOTI', oti.tasaOTI);
-        xml += this.buildTag('valorTotalOTI', oti.valorTotalOTI);
+        xml += this.buildTag('valorTotalOTI', oti.valorTotalOTI, { isAmount: true });
         xml += `</ser:totalOTI>\n`;
       }
       xml += `</ser:listaTotalOTI>\n`;
@@ -202,7 +234,7 @@ export class XmlBuilder {
     if (tot.retencion) {
       xml += `<ser:retencion>\n`;
       xml += this.buildTag('codigoRetencion', tot.retencion.codigoRetencion);
-      xml += this.buildTag('montoRetencion', tot.retencion.montoRetencion);
+      xml += this.buildTag('montoRetencion', tot.retencion.montoRetencion, { isAmount: true });
       xml += `</ser:retencion>\n`;
     }
 
@@ -211,7 +243,7 @@ export class XmlBuilder {
       for (const db of tot.descuentoBonificacion) {
         xml += `<ser:descuento>\n`;
         xml += this.buildTag('descDescuento', db.descDescuento);
-        xml += this.buildTag('montoDescuento', db.montoDescuento);
+        xml += this.buildTag('montoDescuento', db.montoDescuento, { isAmount: true });
         xml += `</ser:descuento>\n`;
       }
       xml += `</ser:descuentoBonificacion>\n`;

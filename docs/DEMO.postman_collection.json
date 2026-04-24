@@ -1,0 +1,226 @@
+{
+	"info": {
+		"_postman_id": "e94eaf25-90f2-47fe-8e7d-c8510670eb27",
+		"name": "DEMO",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "17910117"
+	},
+	"item": [
+		{
+			"name": "Enviar",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/xml",
+						"type": "text"
+					},
+					{
+						"key": "SOAPAction",
+						"value": "\"http://tempuri.org/IService/Enviar\"",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\" xmlns:ser=\"http://schemas.datacontract.org/2004/07/Services.ObjComprobante.v1_0\">\r\n\t<soapenv:Header/>\r\n\t<soapenv:Body>\r\n\t\t<tem:Enviar>\r\n\t\t\t<tem:tokenEmpresa>TOKENEMPRESA</tem:tokenEmpresa>\r\n\t\t\t<!--Optional:-->\r\n\t\t\t<tem:tokenPassword>TOKENPASSWORD</tem:tokenPassword>\r\n\t\t\t<!--Optional:-->\r\n\t\t\t<tem:documento>\r\n\t\t\t\t<ser:codigoSucursalEmisor>0000</ser:codigoSucursalEmisor>\r\n\t\t\t\t<ser:tipoSucursal>1</ser:tipoSucursal>\r\n\t\t\t\t<ser:datosTransaccion>\r\n\t\t\t\t\t<ser:tipoEmision>01</ser:tipoEmision>\r\n\t\t\t\t\t<ser:tipoDocumento>01</ser:tipoDocumento>\r\n\t\t\t\t\t<ser:numeroDocumentoFiscal>51340013</ser:numeroDocumentoFiscal>\r\n\t\t\t\t\t<ser:puntoFacturacionFiscal>001</ser:puntoFacturacionFiscal>\r\n\t\t\t\t\t<ser:fechaEmision>2022-08-03T17:01:28-05:00</ser:fechaEmision>\r\n\t\t\t\t\t<ser:naturalezaOperacion>01</ser:naturalezaOperacion>\r\n\t\t\t\t\t<ser:tipoOperacion>1</ser:tipoOperacion>\r\n\t\t\t\t\t<ser:destinoOperacion>1</ser:destinoOperacion>\r\n\t\t\t\t\t<ser:formatoCAFE>2</ser:formatoCAFE>\r\n\t\t\t\t\t<ser:entregaCAFE>3</ser:entregaCAFE>\r\n\t\t\t\t\t<ser:envioContenedor>1</ser:envioContenedor>\r\n\t\t\t\t\t<ser:procesoGeneracion>1</ser:procesoGeneracion>\r\n\t\t\t\t\t<ser:tipoVenta/>\r\n\t\t\t\t\t<ser:informacionInteres><![CDATA[Prueba de facturacion electronica <br/> prueba2]]></ser:informacionInteres>\r\n\t\t\t\t\t<ser:cliente>\r\n\t\t\t\t\t\t<ser:tipoClienteFE>02</ser:tipoClienteFE>\r\n\t\t\t\t\t\t<ser:razonSocial>CONSUMIDOR FINAL</ser:razonSocial>\r\n\t\t\t\t\t\t<ser:direccion>Ciudad de Panama</ser:direccion>\r\n\t\t\t\t\t\t<ser:telefono1>235-2352</ser:telefono1>\r\n\t\t\t\t\t\t<ser:correoElectronico1/>\r\n\t\t\t\t\t\t<ser:pais>PA</ser:pais>\r\n\t\t\t\t\t</ser:cliente>\r\n\t\t\t\t</ser:datosTransaccion>\r\n\t\t\t\t<ser:listaItems>\r\n\t\t\t\t\t<ser:item>\r\n\t\t\t\t\t\t<ser:descripcion>ITEM FACT ELECTRONICA </ser:descripcion>\r\n\t\t\t\t\t\t<ser:codigo>FEL002</ser:codigo>\r\n\t\t\t\t\t\t<ser:unidadMedida>und</ser:unidadMedida>\r\n\t\t\t\t\t\t<ser:cantidad>1.00</ser:cantidad>\r\n\t\t\t\t\t\t<ser:infoItem>-prueba-</ser:infoItem>\r\n\t\t\t\t\t\t<ser:precioUnitario>100.00</ser:precioUnitario>\r\n\t\t\t\t\t\t<ser:precioUnitarioDescuento>0.00</ser:precioUnitarioDescuento>\r\n\t\t\t\t\t\t<ser:precioItem>100.00</ser:precioItem>\r\n\t\t\t\t\t\t<ser:valorTotal>107.00</ser:valorTotal>\r\n\t\t\t\t\t\t<ser:tasaITBMS>01</ser:tasaITBMS>\r\n\t\t\t\t\t\t<ser:valorITBMS>7.00</ser:valorITBMS>\r\n\t\t\t\t\t</ser:item>\r\n\t\t\t\t</ser:listaItems>\r\n\t\t\t\t<ser:totalesSubTotales>\r\n\t\t\t\t\t<ser:totalPrecioNeto>100.00</ser:totalPrecioNeto>\r\n\t\t\t\t\t<ser:totalITBMS>7.00</ser:totalITBMS>\r\n\t\t\t\t\t<ser:totalMontoGravado>7.00</ser:totalMontoGravado>\r\n\t\t\t\t\t<ser:totalDescuento>0.00</ser:totalDescuento>\r\n\t\t\t\t\t<ser:totalFactura>107.00</ser:totalFactura>\r\n\t\t\t\t\t<ser:totalValorRecibido>107.00</ser:totalValorRecibido>\r\n\t\t\t\t\t<ser:vuelto>0.00</ser:vuelto>\r\n\t\t\t\t\t<ser:tiempoPago>2</ser:tiempoPago>\r\n\t\t\t\t\t<ser:nroItems>1</ser:nroItems>\r\n\t\t\t\t\t<ser:totalTodosItems>107.00</ser:totalTodosItems>\r\n\t\t\t\t\t<ser:listaFormaPago>\r\n\t\t\t\t\t\t<ser:formaPago>\r\n\t\t\t\t\t\t\t<ser:formaPagoFact>01</ser:formaPagoFact>\r\n\t\t\t\t\t\t\t<ser:valorCuotaPagada>100.00</ser:valorCuotaPagada>\r\n\t\t\t\t\t\t</ser:formaPago>\r\n\t\t\t\t\t\t<ser:formaPago>\r\n\t\t\t\t\t\t\t<ser:formaPagoFact>02</ser:formaPagoFact>\r\n\t\t\t\t\t\t\t<ser:valorCuotaPagada>7.00</ser:valorCuotaPagada>\r\n\t\t\t\t\t\t</ser:formaPago>\r\n\t\t\t\t\t</ser:listaFormaPago>\r\n\t\t\t\t\t<ser:listaPagoPlazo>\r\n\t\t\t\t\t\t<ser:pagoPlazo>\r\n\t\t\t\t\t\t\t<ser:fechaVenceCuota>2022-08-21T10:37:38-05:00</ser:fechaVenceCuota>\r\n\t\t\t\t\t\t\t<ser:valorCuota>100.00</ser:valorCuota>\r\n\t\t\t\t\t\t</ser:pagoPlazo>\r\n\t\t\t\t\t\t<ser:pagoPlazo>\r\n\t\t\t\t\t\t\t<ser:fechaVenceCuota>2022-08-29T10:37:38-05:00</ser:fechaVenceCuota>\r\n\t\t\t\t\t\t\t<ser:valorCuota>7.00</ser:valorCuota>\r\n\t\t\t\t\t\t</ser:pagoPlazo>\r\n\t\t\t\t\t</ser:listaPagoPlazo>\r\n\t\t\t\t</ser:totalesSubTotales>\r\n\t\t\t</tem:documento>\r\n\t\t</tem:Enviar>\r\n\t</soapenv:Body>\r\n</soapenv:Envelope>"
+				},
+				"url": "https://demoemision.thefactoryhka.com.pa/ws/obj/v1.0/Service.svc"
+			},
+			"response": []
+		},
+		{
+			"name": "EstadoDocumento",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/xml",
+						"type": "text"
+					},
+					{
+						"key": "SOAPAction",
+						"value": "\"http://tempuri.org/IService/EstadoDocumento\"",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\" xmlns:ser=\"http://schemas.datacontract.org/2004/07/Services.Model\">\r\n   <soapenv:Header/>\r\n   <soapenv:Body>\r\n      <tem:EstadoDocumento>\r\n         <!--Optional:-->\r\n         <tem:tokenEmpresa>TOKENEMPRESA</tem:tokenEmpresa>\r\n         <!--Optional:-->\r\n         <tem:tokenPassword>TOKENPASSWORD</tem:tokenPassword>\r\n\r\n         <!--Optional:-->\r\n         <tem:datosDocumento>\r\n            <!--Optional:-->\r\n            <ser:codigoSucursalEmisor>0000</ser:codigoSucursalEmisor>\r\n            <!--Optional:-->\r\n            <ser:numeroDocumentoFiscal>9992529168</ser:numeroDocumentoFiscal>\r\n            <!--Optional:-->\r\n            <ser:puntoFacturacionFiscal>001</ser:puntoFacturacionFiscal>\r\n            <!--Optional:-->\r\n            <ser:tipoDocumento>01</ser:tipoDocumento>\r\n            <!--Optional:-->\r\n            <ser:tipoEmision>01</ser:tipoEmision>\r\n         </tem:datosDocumento>\r\n      </tem:EstadoDocumento>\r\n   </soapenv:Body>\r\n</soapenv:Envelope>"
+				},
+				"url": "https://demoemision.thefactoryhka.com.pa/ws/obj/v1.0/Service.svc"
+			},
+			"response": []
+		},
+		{
+			"name": "Anulacion",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/xml",
+						"type": "text"
+					},
+					{
+						"key": "SOAPAction",
+						"value": "\"http://tempuri.org/IService/AnulacionDocumento\"",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\" xmlns:ser=\"http://schemas.datacontract.org/2004/07/Services.Model\">\r\n   <soapenv:Header/>\r\n   <soapenv:Body>\r\n      <tem:AnulacionDocumento>\r\n         <!--Optional:-->\r\n       <tem:tokenEmpresa>TOKENEMPRESA</tem:tokenEmpresa>\r\n         <!--Optional:-->\r\n         <tem:tokenPassword>TOKENPASSWORD</tem:tokenPassword>\r\n         <!--Optional:-->\r\n         <!--Optional:-->\r\n         <tem:motivoAnulacion>test de anulacion</tem:motivoAnulacion>\r\n         <!--Optional:-->\r\n         <tem:datosDocumento>\r\n            <!--Optional:-->\r\n            <ser:codigoSucursalEmisor>0000</ser:codigoSucursalEmisor>\r\n            <!--Optional:-->\r\n            <ser:numeroDocumentoFiscal>9992529178</ser:numeroDocumentoFiscal>\r\n            <!--Optional:-->\r\n            <ser:puntoFacturacionFiscal>001</ser:puntoFacturacionFiscal>\r\n            <!--Optional:-->\r\n            <ser:tipoDocumento>01</ser:tipoDocumento>\r\n            <!--Optional:-->\r\n            <ser:tipoEmision>01</ser:tipoEmision>\r\n         </tem:datosDocumento>\r\n      </tem:AnulacionDocumento>\r\n   </soapenv:Body>\r\n</soapenv:Envelope>"
+				},
+				"url": "https://demoemision.thefactoryhka.com.pa/ws/obj/v1.0/Service.svc"
+			},
+			"response": []
+		},
+		{
+			"name": "DescargaXML",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/xml",
+						"type": "text"
+					},
+					{
+						"key": "SOAPAction",
+						"value": "\"http://tempuri.org/IService/DescargaXML\"",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\" xmlns:ser=\"http://schemas.datacontract.org/2004/07/Services.Model\">\r\n   <soapenv:Header/>\r\n   <soapenv:Body>\r\n      <tem:DescargaXML>\r\n           <tem:tokenEmpresa>TOKENEMPRESA</tem:tokenEmpresa>\r\n         <!--Optional:-->\r\n         <tem:tokenPassword>TOKENPASSWORD</tem:tokenPassword>\r\n         <!--Optional:-->\r\n         <tem:datosDocumento>\r\n            <!--Optional:-->\r\n            <ser:codigoSucursalEmisor>0000</ser:codigoSucursalEmisor>\r\n            <!--Optional:-->\r\n            <ser:numeroDocumentoFiscal>0076660568</ser:numeroDocumentoFiscal>\r\n            <!--Optional:-->\r\n            <ser:puntoFacturacionFiscal>003</ser:puntoFacturacionFiscal>\r\n            <!--Optional:-->\r\n            <ser:tipoDocumento>01</ser:tipoDocumento>\r\n            <!--Optional:-->\r\n            <ser:tipoEmision>01</ser:tipoEmision>\r\n         </tem:datosDocumento>\r\n\r\n      </tem:DescargaXML>\r\n   </soapenv:Body>\r\n</soapenv:Envelope>"
+				},
+				"url": "https://demoemision.thefactoryhka.com.pa/ws/obj/v1.0/Service.svc"
+			},
+			"response": []
+		},
+		{
+			"name": "FoliosRestantes",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/xml",
+						"type": "text"
+					},
+					{
+						"key": "SOAPAction",
+						"value": "\"http://tempuri.org/IService/FoliosRestantes\"",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\">\r\n   <soapenv:Header/>\r\n   <soapenv:Body>\r\n      <tem:FoliosRestantes>\r\n         <!--Optional:-->\r\n            <tem:tokenEmpresa>TOKENEMPRESA</tem:tokenEmpresa>\r\n         <!--Optional:-->\r\n         <tem:tokenPassword>TOKENPASSWORD</tem:tokenPassword>\r\n      </tem:FoliosRestantes>\r\n   </soapenv:Body>\r\n</soapenv:Envelope>"
+				},
+				"url": "https://demoemision.thefactoryhka.com.pa/ws/obj/v1.0/Service.svc"
+			},
+			"response": []
+		},
+		{
+			"name": "EnvioCorreo",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/xml",
+						"type": "text"
+					},
+					{
+						"key": "SOAPAction",
+						"value": "\"http://tempuri.org/IService/EnvioCorreo\"",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\" xmlns:ser=\"http://schemas.datacontract.org/2004/07/Services.Model\">\r\n   <soapenv:Header/>\r\n   <soapenv:Body>\r\n      <tem:EnvioCorreo>\r\n         <!--Optional:-->\r\n         <tem:tokenEmpresa>TOKENEMPRESA</tem:tokenEmpresa>\r\n         <tem:tokenPassword>TOKENPASSWORD</tem:tokenPassword>\r\n         <!--Optional:-->\r\n         <tem:datosDocumento>\r\n            <!--Optional:-->\r\n            <ser:codigoSucursalEmisor>0001</ser:codigoSucursalEmisor>\r\n            <!--Optional:-->\r\n            <ser:numeroDocumentoFiscal>0000000079</ser:numeroDocumentoFiscal>\r\n            <!--Optional:-->\r\n            <ser:puntoFacturacionFiscal>222</ser:puntoFacturacionFiscal>\r\n            <!--Optional:-->\r\n            <ser:tipoDocumento>01</ser:tipoDocumento>\r\n            <!--Optional:-->\r\n            <ser:tipoEmision>01</ser:tipoEmision>\r\n         </tem:datosDocumento>\r\n         <!--Optional:-->\r\n         <tem:correo>correo@mail.com</tem:correo>\r\n      </tem:EnvioCorreo>\r\n   </soapenv:Body>\r\n</soapenv:Envelope>"
+				},
+				"url": "https://demoemision.thefactoryhka.com.pa/ws/obj/v1.0/Service.svc"
+			},
+			"response": []
+		},
+		{
+			"name": "DescargaPDF",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/xml",
+						"type": "text"
+					},
+					{
+						"key": "SOAPAction",
+						"value": "\"http://tempuri.org/IService/DescargaPDF\"",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\" xmlns:ser=\"http://schemas.datacontract.org/2004/07/Services.Model\">\r\n   <soapenv:Header/>\r\n   <soapenv:Body>\r\n      <tem:DescargaPDF>\r\n           <tem:tokenEmpresa>TOKENEMPRESA</tem:tokenEmpresa>\r\n         <!--Optional:-->\r\n         <tem:tokenPassword>TOKENPASSWORD</tem:tokenPassword>\r\n         <!--Optional:-->\r\n         <tem:datosDocumento>\r\n            <!--Optional:-->\r\n            <ser:codigoSucursalEmisor>0000</ser:codigoSucursalEmisor>\r\n            <!--Optional:-->\r\n            <ser:numeroDocumentoFiscal>0076660568</ser:numeroDocumentoFiscal>\r\n            <!--Optional:-->\r\n            <ser:puntoFacturacionFiscal>003</ser:puntoFacturacionFiscal>\r\n            <!--Optional:-->\r\n            <ser:tipoDocumento>01</ser:tipoDocumento>\r\n            <!--Optional:-->\r\n            <ser:tipoEmision>01</ser:tipoEmision>\r\n         </tem:datosDocumento>\r\n      </tem:DescargaPDF>\r\n   </soapenv:Body>\r\n</soapenv:Envelope>"
+				},
+				"url": "https://demoemision.thefactoryhka.com.pa/ws/obj/v1.0/Service.svc"
+			},
+			"response": []
+		},
+		{
+			"name": "RastreoCorreo",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/xml",
+						"type": "text"
+					},
+					{
+						"key": "SOAPAction",
+						"value": "\"http://tempuri.org/IService/RastreoCorreo\"",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\">\r\n   <soapenv:Header/>\r\n   <soapenv:Body>\r\n      <tem:RastreoCorreo>\r\n         <!--Optional:-->\r\n         <tem:tokenEmpresa>TOKENEMPRESA</tem:tokenEmpresa>\r\n         <!--Optional:-->\r\n         <tem:tokenPassword>TOKENPASSWORD</tem:tokenPassword>\r\n         <!--Optional:-->\r\n         <tem:cufe>CUFEDOCUMENTO</tem:cufe>\r\n      </tem:RastreoCorreo>\r\n   </soapenv:Body>\r\n</soapenv:Envelope>"
+				},
+				"url": "https://demoemision.thefactoryhka.com.pa/ws/obj/v1.0/Service.svc"
+			},
+			"response": []
+		},
+		{
+			"name": "ConsultarRucDV",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/xml",
+						"type": "text"
+					},
+					{
+						"key": "SOAPAction",
+						"value": "\"http://tempuri.org/IService/ConsultarRucDV\"",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://tempuri.org/\" xmlns:ser=\"http://schemas.datacontract.org/2004/07/Services.ApiRest\">\r\n   <soapenv:Header/>\r\n   <soapenv:Body>\r\n      <tem:ConsultarRucDV>\r\n         <!--Optional:-->\r\n         <tem:consultarRucDVRequest>\r\n            <!--Optional:-->\r\n            <ser:tokenEmpresa>TOKENEMPRESA</ser:tokenEmpresa>\r\n            <!--Optional:-->\r\n            <ser:tokenPassword>TOKENPASSWORD</ser:tokenPassword>\r\n            <!--Optional:-->\r\n            <ser:tipoRuc>1-NATURAL, 2-JURIDICO</ser:tipoRuc>\r\n            <!--Optional:-->\r\n            <ser:ruc>RUC</ser:ruc>\r\n         </tem:consultarRucDVRequest>\r\n      </tem:ConsultarRucDV>\r\n   </soapenv:Body>\r\n</soapenv:Envelope>"
+				},
+				"url": "https://demoemision.thefactoryhka.com.pa/ws/obj/v1.0/Service.svc"
+			},
+			"response": []
+		}
+	]
+}

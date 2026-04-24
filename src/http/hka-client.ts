@@ -131,4 +131,100 @@ export class HkaClient {
       pdf: SoapParser.extractTag(data, 'documento'),
     };
   }
+
+  async descargaXML(cufe: string): Promise<DescargaXMLResponse> {
+    const envelope = SoapEnvelopeBuilder.buildDescargaXML(
+      this.config.tokenEmpresa,
+      this.config.tokenPassword,
+      cufe
+    );
+
+    const data = await this.postSoapAction('DescargaXML', envelope);
+
+    return {
+      codigo: SoapParser.extractTag(data, 'codigo') || '',
+      resultado: SoapParser.extractTag(data, 'resultado') || '',
+      mensaje: SoapParser.extractTag(data, 'mensaje') || '',
+      xmlFirmado: SoapParser.extractTag(data, 'documento'),
+    };
+  }
+
+  async foliosRestantes(): Promise<FoliosRestantesResponse> {
+    const envelope = SoapEnvelopeBuilder.buildFoliosRestantes(
+      this.config.tokenEmpresa,
+      this.config.tokenPassword
+    );
+
+    const data = await this.postSoapAction('FoliosRestantes', envelope);
+
+    return {
+      licencia: SoapParser.extractTag(data, 'licencia') || '',
+      fechaLicencia: SoapParser.extractTag(data, 'fechaLicencia') || '',
+      ciclo: SoapParser.extractTag(data, 'ciclo') || '',
+      fechaCiclo: SoapParser.extractTag(data, 'fechaCiclo') || '',
+      foliosTotalesCiclo: SoapParser.extractTag(data, 'foliosTotalesCiclo') || '',
+      foliosUtilizadosCiclo: SoapParser.extractTag(data, 'foliosUtilizadosCiclo') || '',
+      foliosDisponibleCiclo: SoapParser.extractTag(data, 'foliosDisponibleCiclo') || '',
+      foliosTotales: SoapParser.extractTag(data, 'foliosTotales') || '',
+    };
+  }
+
+  async envioCorreo(cufe: string, correos: string): Promise<EnvioCorreoResponse> {
+    const envelope = SoapEnvelopeBuilder.buildEnvioCorreo(
+      this.config.tokenEmpresa,
+      this.config.tokenPassword,
+      cufe,
+      correos
+    );
+
+    const data = await this.postSoapAction('EnvioCorreo', envelope);
+
+    return {
+      codigo: SoapParser.extractTag(data, 'codigo') || '',
+      resultado: SoapParser.extractTag(data, 'resultado') || '',
+      mensaje: SoapParser.extractTag(data, 'mensaje') || '',
+    };
+  }
+
+  async rastreoCorreo(cufe: string): Promise<RastreoCorreoResponse> {
+    const envelope = SoapEnvelopeBuilder.buildRastreoCorreo(
+      this.config.tokenEmpresa,
+      this.config.tokenPassword,
+      cufe
+    );
+
+    const data = await this.postSoapAction('RastreoCorreo', envelope);
+
+    return {
+      codigo: SoapParser.extractTag(data, 'codigo') || '',
+      resultado: SoapParser.extractTag(data, 'resultado') || '',
+      mensaje: SoapParser.extractTag(data, 'mensaje') || '',
+      eventosCorreo: (SoapParser.extractList(data, 'eventosCorreo', 'evento', ['fecha', 'estatus', 'mensaje']) as Array<{ fecha: string; estatus: string; mensaje: string }>) || [],
+    };
+  }
+
+  async consultarRucDV(ruc: string, tipoRuc: string = '2'): Promise<ConsultarRucDVResponse> {
+    const envelope = SoapEnvelopeBuilder.buildConsultarRucDV(
+      this.config.tokenEmpresa,
+      this.config.tokenPassword,
+      ruc,
+      tipoRuc
+    );
+
+    const data = await this.postSoapAction('ConsultarRucDV', envelope);
+    const infoRucStr = SoapParser.extractTag(data, 'infoRuc') || '';
+
+    return {
+      codigo: SoapParser.extractTag(data, 'codigo') || '',
+      resultado: SoapParser.extractTag(data, 'resultado') || '',
+      mensaje: SoapParser.extractTag(data, 'mensaje') || '',
+      infoRuc: infoRucStr ? {
+        tipoRuc: SoapParser.extractTag(infoRucStr, 'tipoRuc') || '',
+        ruc: SoapParser.extractTag(infoRucStr, 'ruc') || '',
+        dv: SoapParser.extractTag(infoRucStr, 'dv') || '',
+        razonSocial: SoapParser.extractTag(infoRucStr, 'razonSocial') || '',
+        afiliadoFE: SoapParser.extractTag(infoRucStr, 'afiliadoFE') || '',
+      } : undefined,
+    };
+  }
 }

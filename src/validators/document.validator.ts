@@ -18,12 +18,60 @@ export class DocumentValidator {
       throw new Error(`puntoFacturacionFiscal no puede ser "000".`);
     }
 
-    // Regla 4.2.B - Destino extranjero
-    if (trx.destinoOperacion === '2') {
-      if (!doc.datosFacturaExportacion) {
+    // Regla 4.1.A - Jurídico siempre es Contribuyente
+    if (trx.cliente.tipoContribuyente === '2' && trx.cliente.tipoClienteFE !== '01') {
+      throw new Error(
+        `Si el cliente es Jurídico (tipoContribuyente="2"), debe ser declarado como Contribuyente (tipoClienteFE="01").`
+      );
+    }
+
+    // Regla 4.1.D - Campos obligatorios para Contribuyente (01) y Gobierno (03)
+    if (trx.cliente.tipoClienteFE === '01' || trx.cliente.tipoClienteFE === '03') {
+      const { numeroRUC, digitoVerificadorRUC, razonSocial, direccion } = trx.cliente;
+      if (!numeroRUC || !digitoVerificadorRUC || !razonSocial || !direccion) {
         throw new Error(
-          `Si destinoOperacion="2" (Extranjero), 'datosFacturaExportacion' es obligatorio.`
+          `Para Contribuyente o Gobierno (01/03), los campos RUC, DV, Razón Social y Dirección son obligatorios.`
         );
+      }
+    }
+
+    // Regla 4.2.A/B/C - Destino y País
+    if (trx.destinoOperacion === '1') {
+      // Panamá interno
+      if (trx.cliente.pais && trx.cliente.pais !== 'PA') {
+        throw new Error(`Si destinoOperacion="1" (Panamá), el país del cliente debe ser "PA".`);
+      }
+    } else if (trx.destinoOperacion === '2') {
+      // Extranjero
+      if (trx.cliente.pais === 'PA') {
+        throw new Error(`Si destinoOperacion="2" (Extranjero), el país del cliente no puede ser "PA".`);
+      }
+      if (!doc.datosFacturaExportacion) {
+        throw new Error(`Si destinoOperacion="2", la sección 'datosFacturaExportacion' es obligatoria.`);
+      }
+    }
+
+    // Regla 4.2.D - País "ZZ"
+    if (trx.cliente.pais === 'ZZ' && !trx.cliente.paisOtro) {
+      throw new Error(`Si el país es "ZZ", el campo 'paisOtro' es obligatorio.`);
+    }
+
+    // Regla 4.6.A - Acarreo y seguro: ítem vs total
+    const tot = doc.totalesSubTotales;
+    const hasAcarreoInItems = doc.listaItems.some((i) => i.precioAcarreo && parseFloat(i.precioAcarreo) > 0);
+    const hasSeguroInItems = doc.listaItems.some((i) => i.precioSeguro && parseFloat(i.precioSeguro) > 0);
+
+    if (hasAcarreoInItems && tot.totalAcarreoCobrado && parseFloat(tot.totalAcarreoCobrado) > 0) {
+      throw new Error(`No se puede informar 'precioAcarreo' en ítems y 'totalAcarreoCobrado' en totales simultáneamente.`);
+    }
+    if (hasSeguroInItems && tot.valorSeguroCobrado && parseFloat(tot.valorSeguroCobrado) > 0) {
+      throw new Error(`No se puede informar 'precioSeguro' en ítems y 'valorSeguroCobrado' en totales simultáneamente.`);
+    }
+
+    // Regla 4.6.B - Pago a plazo (tiempoPago 2=Plazo, 3=Mixto)
+    if (tot.tiempoPago === '2' || tot.tiempoPago === '3') {
+      if (!tot.listaPagoPlazo || tot.listaPagoPlazo.length === 0) {
+        throw new Error(`Para tiempoPago "${tot.tiempoPago}", 'listaPagoPlazo' es obligatoria.`);
       }
     }
 
@@ -50,12 +98,9 @@ export class DocumentValidator {
       trx.tipoDocumento === DOCUMENT_TYPES.NOTA_DEBITO_GENERICA
     ) {
       if (doc.docFiscalReferenciado && doc.docFiscalReferenciado.length > 0) {
-        // En notas genéricas no debe haber CUFE referenciado
         const hasCufe = doc.docFiscalReferenciado.some((ref) => ref.cufeFEReferenciada);
         if (hasCufe) {
-          throw new Error(
-            `Para Notas genéricas (06/07), no se debe incluir 'cufeFEReferenciada'.`
-          );
+          throw new Error(`Para Notas genéricas (06/07), no se debe incluir 'cufeFEReferenciada'.`);
         }
       }
     }
@@ -66,7 +111,7 @@ export class DocumentValidator {
         const item = doc.listaItems[i];
         if (!item.codigoCPBS || !item.codigoCPBSAbrev || !item.unidadMedidaCPBS) {
           throw new Error(
-            `Para clientes Gobierno (03), todos los ítems deben incluir codigoCPBS, codigoCPBSAbrev y unidadMedidaCPBS (Falta en ítem ${i+1}).`
+            `Para clientes Gobierno (03), los ítems deben incluir codigoCPBS, codigoCPBSAbrev y unidadMedidaCPBS (Falta en ítem ${i+1}).`
           );
         }
       }

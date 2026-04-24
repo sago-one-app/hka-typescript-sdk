@@ -105,12 +105,27 @@ export class SoapEnvelopeBuilder {
   /**
    * Builds the SOAP Envelope for the "ConsultarRucDV" method.
    */
-  static buildConsultarRucDV(tokenEmpresa: string, tokenPassword: string, ruc: string): string {
+  static buildConsultarRucDV(tokenEmpresa: string, tokenPassword: string, ruc: string, tipoRuc: string = '2'): string {
     const body = `<tem:ConsultarRucDV>
+         <tem:consultarRucDVRequest>
+            <ser:tokenEmpresa>${tokenEmpresa}</ser:tokenEmpresa>
+            <ser:tokenPassword>${tokenPassword}</ser:tokenPassword>
+            <ser:tipoRuc>${tipoRuc}</ser:tipoRuc>
+            <ser:ruc>${ruc}</ser:ruc>
+         </tem:consultarRucDVRequest>
+      </tem:ConsultarRucDV>`;
+    return this.wrap(body);
+  }
+
+  /**
+   * Builds the SOAP Envelope for the "RastreoCorreo" method.
+   */
+  static buildRastreoCorreo(tokenEmpresa: string, tokenPassword: string, cufe: string): string {
+    const body = `<tem:RastreoCorreo>
          <tem:tokenEmpresa>${tokenEmpresa}</tem:tokenEmpresa>
          <tem:tokenPassword>${tokenPassword}</tem:tokenPassword>
-         <tem:RUC>${ruc}</tem:RUC>
-      </tem:ConsultarRucDV>`;
+         <tem:cufe>${cufe}</tem:cufe>
+      </tem:RastreoCorreo>`;
     return this.wrap(body);
   }
 }
