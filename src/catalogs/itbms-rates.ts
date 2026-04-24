@@ -1,0 +1,15 @@
+export const ITBMS_RATES = {
+  EXENTO: '00',
+  ESTANDAR: '01',
+  ESPECIAL: '02',
+  ESPECIAL_ALCOHOL_TABACO: '03',
+} as const;
+
+export type ITBMSRateCode = typeof ITBMS_RATES[keyof typeof ITBMS_RATES];
+
+export const ITBMS_RATES_DECIMAL: Record<ITBMSRateCode, number> = {
+  [ITBMS_RATES.EXENTO]: 0.00,
+  [ITBMS_RATES.ESTANDAR]: 0.07,
+  [ITBMS_RATES.ESPECIAL]: 0.10,
+  [ITBMS_RATES.ESPECIAL_ALCOHOL_TABACO]: 0.15,
+};

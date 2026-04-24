@@ -1,0 +1,10 @@
+export const RETENTION_CODES = {
+  SERVICIO_PROFESIONAL_ESTADO_100: '1',
+  VENTA_ESTADO_50: '2',
+  PAGO_NO_DOMICILIADO_100: '3',
+  COMPRA_BIENES_SERVICIOS_50: '4',
+  COMERCIO_AFILIADO_TC_TD_50: '7',
+  OTROS: '8',
+} as const;
+
+export type RetentionCode = typeof RETENTION_CODES[keyof typeof RETENTION_CODES];

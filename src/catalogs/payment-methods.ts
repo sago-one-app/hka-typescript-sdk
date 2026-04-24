@@ -1,0 +1,14 @@
+export const PAYMENT_METHODS = {
+  CREDITO: '01',
+  EFECTIVO: '02',
+  TARJETA_CREDITO: '03',
+  TARJETA_DEBITO: '04',
+  TARJETA_FIDELIZACION: '05',
+  VALE: '06',
+  TARJETA_REGALO: '07',
+  TRANSFERENCIA_DEPOSITO: '08',
+  CHEQUE: '09',
+  OTRO: '99',
+} as const;
+
+export type PaymentMethod = typeof PAYMENT_METHODS[keyof typeof PAYMENT_METHODS];
