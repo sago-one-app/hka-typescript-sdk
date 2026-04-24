@@ -1,34 +1,31 @@
-# HKA TypeScript SDK
+# HKA SDK TypeScript
 
-SDK desarrollado en TypeScript para la integración con los servicios web de Facturación Electrónica de The Factory HKA (Panamá). Este paquete abstrae la complejidad de la construcción de sobres SOAP, validaciones de reglas de negocio de la DGI y cálculos fiscales obligatorios.
-
-## Características Principales
-
-- Construcción automatizada de estructuras XML para el método `Enviar`.
-- Implementación completa de métodos secundarios: `AnulacionDocumento`, `DescargaXML`, `FoliosRestantes`, `EnvioCorreo`, `RastreoCorreo` y `ConsultarRucDV`.
-- Validador de reglas de negocio cruzadas (Etapa 4 de Auditoría HKA).
-- Calculadoras fiscales integradas para ITBMS, ISC y Totales.
-- Soporte para padding automático de campos fiscales (Sucursal, Punto de Facturación, Número de Documento).
-- Tipado estricto con TypeScript y validación de esquemas mediante Zod.
-
-## Estructura del Proyecto
-
-```text
-src/
-├── builders/     # Generadores de sobres SOAP y documentos XML
-├── calculators/  # Lógica de cálculo de ITBMS y totales de factura
-├── catalogs/     # Catálogos oficiales (Tipos de documento, tasas, etc.)
-├── http/         # Cliente Axios especializado en comunicación SOAP
-├── types/        # Definiciones de tipos y esquemas de validación Zod
-└── validators/   # Motores de validación de reglas de negocio DGI
-```
+SDK desarrollado en TypeScript para la integración con los servicios web de Facturación Electrónica de The Factory HKA (Panamá).
 
 ## Instalación
 
-Asegúrese de tener configuradas las dependencias necesarias en su proyecto:
+Para integrar este motor en su proyecto, simplemente ejecute:
 
 ```bash
-npm install axios zod
+npm install hka-sdk-typescripts
+# o
+pnpm add hka-sdk-typescripts
+```
+
+## Inicio Rápido
+
+Importe el cliente y los validadores directamente desde el paquete:
+
+```typescript
+import { HkaClient, DocumentValidator, XmlBuilder } from 'hka-sdk-typescripts';
+
+const client = new HkaClient({
+  baseUrl: 'https://...',
+  tokenEmpresa: '...',
+  tokenPassword: '...'
+});
+
+// El SDK se encarga de la validación, construcción del XML y comunicación SOAP
 ```
 
 ## Uso del SDK

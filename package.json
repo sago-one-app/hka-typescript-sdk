@@ -1,5 +1,5 @@
 {
-  "name": "hka-sdk",
+  "name": "hka-sdk-typescripts",
   "version": "1.0.0",
   "description": "SDK en TypeScript para integración con The Factory HKA (Panamá)",
   "main": "dist/index.js",
