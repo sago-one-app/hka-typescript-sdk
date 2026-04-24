@@ -107,6 +107,10 @@ Este SDK ha sido diseñado para superar las etapas de auditoría técnica exigid
 - Axios v1.x.
 - Zod v3.x.
 
-## Licencia
+## Estado del Proyecto
 
-Este proyecto es de uso privado y propiedad intelectual de Sago One.
+Actualmente, este SDK se encuentra en fase de desarrollo y pruebas de integración interna. Se planea su publicación oficial en el registro público de npm una vez que se haya validado el 100% de su funcionalidad y estabilidad en entornos de producción.
+
+---
+
+Este proyecto es propiedad intelectual de Sago One.
