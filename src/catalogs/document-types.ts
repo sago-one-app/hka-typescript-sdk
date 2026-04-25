@@ -8,7 +8,7 @@ export const DOCUMENT_TYPES = {
   NOTA_DEBITO_GENERICA: '07',
   FACTURA_ZONA_FRANCA: '08',
   REEMBOLSO: '09',
-  COMPROBANTE_COMPRA: '10',
+  FACTURA_OPERACION_EXTRANJERA: '10',
 } as const;
 
 export type DocumentType = typeof DOCUMENT_TYPES[keyof typeof DOCUMENT_TYPES];

@@ -43,10 +43,11 @@ export interface DescargaPDFResponse extends HkaBaseResponse {
 }
 
 export interface RastreoCorreoResponse extends HkaBaseResponse {
-  eventosCorreo?: Array<{
-    fecha: string;
-    estatus: string;
-    mensaje: string;
+  listaRastreo?: Array<{
+    correo: string;
+    creado_en: string;
+    estado: string;
+    messageId: string;
   }>;
 }
 

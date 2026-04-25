@@ -170,6 +170,89 @@ describe('Compliance 14 Cases DGI', () => {
     expect(doc.totalesSubTotales.totalFactura).toBe('7.00'); // 107 - 100
   });
 
+  it('Caso 6: Nota de Débito referente a FE', () => {
+    const doc = createBaseDocument();
+    doc.datosTransaccion.tipoDocumento = DOCUMENT_TYPES.NOTA_DEBITO_REFERENTE_FE;
+    doc.docFiscalReferenciado = [{
+      fechaEmisionDocFiscalReferenciado: '2023-01-01T10:00:00-05:00',
+      cufeFEReferenciada: '2'.repeat(66),
+    }];
+
+    const xml = validateDoc(doc);
+    expect(xml).toContain('<ser:cufeFEReferenciada>');
+    expect(xml).toContain('2'.repeat(66));
+  });
+
+  it('Caso 7: Nota de Crédito genérica — sin CUFE referenciado', () => {
+    const doc = createBaseDocument();
+    doc.datosTransaccion.tipoDocumento = DOCUMENT_TYPES.NOTA_CREDITO_GENERICA;
+    // Las notas genéricas pueden incluir nroFacturaPapel pero NO cufeFEReferenciada
+    doc.docFiscalReferenciado = [{
+      fechaEmisionDocFiscalReferenciado: '2023-01-01T10:00:00-05:00',
+      nroFacturaPapel: 'FAC-0001',
+    }];
+
+    const xml = validateDoc(doc);
+    expect(xml).not.toContain('<ser:cufeFEReferenciada>');
+    expect(xml).toContain('<ser:nroFacturaPapel>FAC-0001</ser:nroFacturaPapel>');
+  });
+
+  it('Caso 8: Nota de Débito genérica — sin CUFE referenciado', () => {
+    const doc = createBaseDocument();
+    doc.datosTransaccion.tipoDocumento = DOCUMENT_TYPES.NOTA_DEBITO_GENERICA;
+    doc.docFiscalReferenciado = [{
+      fechaEmisionDocFiscalReferenciado: '2023-01-01T10:00:00-05:00',
+      nroFacturaPapel: 'FAC-0002',
+    }];
+
+    const xml = validateDoc(doc);
+    expect(xml).not.toContain('<ser:cufeFEReferenciada>');
+    expect(xml).toContain('<ser:nroFacturaPapel>FAC-0002</ser:nroFacturaPapel>');
+  });
+
+  it('Caso 10: Ítem a precio 0.00 — exento de ITBMS', () => {
+    const doc = createBaseDocument();
+    doc.listaItems = [{
+      descripcion: 'Obsequio sin valor comercial',
+      cantidad: '1',
+      precioUnitario: '0.00',
+      precioUnitarioDescuento: '0.00',
+      precioItem: '0.00',
+      valorTotal: '0.00',
+      tasaITBMS: ITBMS_RATES.EXENTO,
+      valorITBMS: '0.00',
+    }];
+    doc.totalesSubTotales = TotalsCalculator.calculate(
+      doc.listaItems,
+      [{ formaPagoFact: PAYMENT_METHODS.EFECTIVO, valorCuotaPagada: '0.00' }],
+      PAYMENT_TIMES.INMEDIATO
+    ) as any;
+
+    const xml = validateDoc(doc);
+    expect(doc.totalesSubTotales.totalITBMS).toBe('0.00');
+    expect(doc.totalesSubTotales.totalFactura).toBe('0.00');
+    expect(xml).toContain('<ser:tasaITBMS>00</ser:tasaITBMS>');
+  });
+
+  it('Caso 13: Factura a plazo con listaPagoPlazo', () => {
+    const doc = createBaseDocument();
+    const totales = TotalsCalculator.calculate(
+      doc.listaItems,
+      [{ formaPagoFact: PAYMENT_METHODS.CREDITO, valorCuotaPagada: '107.00' }],
+      PAYMENT_TIMES.PLAZO
+    ) as any;
+    totales.listaPagoPlazo = [
+      { fechaVenceCuota: '2023-06-30T00:00:00-05:00', valorCuota: '60.00' },
+      { fechaVenceCuota: '2023-07-31T00:00:00-05:00', valorCuota: '47.00' },
+    ];
+    doc.totalesSubTotales = totales;
+
+    const xml = validateDoc(doc);
+    expect(xml).toContain('<ser:listaPagoPlazo>');
+    expect(xml).toContain('<ser:fechaVenceCuota>2023-06-30T00:00:00-05:00</ser:fechaVenceCuota>');
+    expect(doc.totalesSubTotales.tiempoPago).toBe('2');
+  });
+
   it('Caso 14: Precios 6 decimales redondeo', () => {
     const doc = createBaseDocument();
     doc.listaItems = [
