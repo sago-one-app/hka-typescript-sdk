@@ -1,7 +1,7 @@
 export { HkaSdk } from './hka-sdk';
 export type { HkaSdkConfig } from './hka-sdk';
-export { HkaError } from './errors';
-export type { HkaErrorType, HkaErrorDetails } from './errors';
+export { HkaError, HKA_CODES } from './errors';
+export type { HkaErrorType, HkaErrorDetails, HkaCode } from './errors';
 export { HKA_ENDPOINTS } from './environments';
 export type { HkaEnvironment } from './environments';
 export type {

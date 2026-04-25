@@ -20,7 +20,7 @@ import { DOCUMENT_TYPES } from '../catalogs/document-types';
 import { NATURE_OPERATIONS } from '../catalogs/nature-operations';
 import { OPERATION_DESTINATIONS } from '../catalogs/operation-destinations';
 import { HKA_ENDPOINTS, type HkaEnvironment } from './environments';
-import { HkaError } from './errors';
+import { HkaError, HKA_CODES } from './errors';
 import type {
   EmisionResult,
   AnulacionResult,
@@ -163,7 +163,7 @@ export class HkaSdk {
 
     try {
       const response = await this.client.anulacionDocumento(datos, motivo);
-      if (response.codigo !== '200') {
+      if (response.codigo !== HKA_CODES.SUCCESS) {
         throw new HkaError('API', response.mensaje, { codigoHka: response.codigo });
       }
       return { success: true, mensaje: response.mensaje };
@@ -176,7 +176,7 @@ export class HkaSdk {
   async consultarEstado(datos: DatosDocumento): Promise<GestionResult & { cufe?: string; estatusDocumento?: string }> {
     try {
       const response = await this.client.estadoDocumento(datos);
-      if (response.codigo !== '200') {
+      if (response.codigo !== HKA_CODES.SUCCESS) {
         throw new HkaError('API', response.mensaje, { codigoHka: response.codigo });
       }
       return {
@@ -194,7 +194,7 @@ export class HkaSdk {
   async descargarPDF(datos: DatosDocumento): Promise<DescargaPDFResult> {
     try {
       const response = await this.client.descargaPDF(datos);
-      if (response.codigo !== '200') {
+      if (response.codigo !== HKA_CODES.SUCCESS) {
         throw new HkaError('API', response.mensaje, { codigoHka: response.codigo });
       }
       if (!response.pdf) {
@@ -210,7 +210,7 @@ export class HkaSdk {
   async descargarXML(datos: DatosDocumento): Promise<DescargaXMLResult> {
     try {
       const response = await this.client.descargaXML(datos);
-      if (response.codigo !== '200') {
+      if (response.codigo !== HKA_CODES.SUCCESS) {
         throw new HkaError('API', response.mensaje, { codigoHka: response.codigo });
       }
       if (!response.xmlFirmado) {
@@ -236,7 +236,7 @@ export class HkaSdk {
   async enviarPorCorreo(datos: DatosDocumento, correo: string): Promise<GestionResult> {
     try {
       const response = await this.client.envioCorreo(datos, correo);
-      if (response.codigo !== '200') {
+      if (response.codigo !== HKA_CODES.SUCCESS) {
         throw new HkaError('API', response.mensaje, { codigoHka: response.codigo });
       }
       return { success: true, mensaje: response.mensaje };
@@ -258,7 +258,7 @@ export class HkaSdk {
   async consultarRucDV(ruc: string, tipoRuc?: string): Promise<ConsultarRucDVResult> {
     try {
       const response = await this.client.consultarRucDV(ruc, tipoRuc);
-      if (response.codigo !== '200') {
+      if (response.codigo !== HKA_CODES.SUCCESS) {
         throw new HkaError('API', response.mensaje, { codigoHka: response.codigo });
       }
       return { success: true, infoRuc: response.infoRuc };
@@ -362,8 +362,15 @@ export class HkaSdk {
     }
 
     // 8. Verificar respuesta
-    if (response.codigo !== '200') {
-      throw new HkaError('API', response.mensaje, { codigoHka: response.codigo });
+    if (response.codigo !== HKA_CODES.SUCCESS) {
+      const msg = response.codigo === HKA_CODES.DUPLICATE
+        ? `Documento duplicado: ${response.mensaje}`
+        : response.codigo === HKA_CODES.NO_FOLIOS
+          ? `Sin folios disponibles: ${response.mensaje}`
+          : response.codigo === HKA_CODES.RESEND
+            ? `Se requiere reenvío (código 300): ${response.mensaje}`
+            : response.mensaje;
+      throw new HkaError('API', msg, { codigoHka: response.codigo });
     }
 
     if (!response.cufe) {
