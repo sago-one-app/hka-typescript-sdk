@@ -19,5 +19,17 @@ export class ContingencyValidator {
         throw new Error(`motivoContingencia debe tener entre 15 y 250 caracteres.`);
       }
     }
+
+    // Autorización de uso posterior requiere usoPosterior con el CUFE previo
+    if (
+      trx.tipoEmision === EMISSION_TYPES.AUTORIZACION_POSTERIOR_NORMAL ||
+      trx.tipoEmision === EMISSION_TYPES.AUTORIZACION_POSTERIOR_CONTINGENCIA
+    ) {
+      if (!doc.usoPosterior) {
+        throw new Error(
+          `Para tipoEmision "${trx.tipoEmision}" (Uso Posterior), la sección 'usoPosterior' con el CUFE previo es obligatoria.`
+        );
+      }
+    }
   }
 }

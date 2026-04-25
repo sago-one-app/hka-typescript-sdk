@@ -2,6 +2,7 @@ import axios, { AxiosInstance } from 'axios';
 import { SoapEnvelopeBuilder } from '../builders/soap-envelope';
 import { SoapParser } from './soap-parser';
 import { RetryHandler } from './retry';
+import { DatosDocumento } from '../types/datos-documento.types';
 import {
   EnviarResponse,
   EstadoDocumentoResponse,
@@ -28,7 +29,7 @@ export class HkaClient {
 
   constructor(config: HkaClientConfig) {
     this.config = {
-      timeoutMs: 15000,
+      timeoutMs: 30000,
       maxRetries: 3,
       ...config,
     };
@@ -77,11 +78,11 @@ export class HkaClient {
     };
   }
 
-  async anulacionDocumento(cufe: string, motivo: string): Promise<AnulacionResponse> {
+  async anulacionDocumento(datos: DatosDocumento, motivo: string): Promise<AnulacionResponse> {
     const envelope = SoapEnvelopeBuilder.buildAnulacion(
       this.config.tokenEmpresa,
       this.config.tokenPassword,
-      cufe,
+      datos,
       motivo
     );
 
@@ -94,11 +95,11 @@ export class HkaClient {
     };
   }
 
-  async estadoDocumento(cufe: string): Promise<EstadoDocumentoResponse> {
+  async estadoDocumento(datos: DatosDocumento): Promise<EstadoDocumentoResponse> {
     const envelope = SoapEnvelopeBuilder.buildEstadoDocumento(
       this.config.tokenEmpresa,
       this.config.tokenPassword,
-      cufe
+      datos
     );
 
     const data = await this.postSoapAction('EstadoDocumento', envelope);
@@ -115,11 +116,11 @@ export class HkaClient {
     };
   }
 
-  async descargaPDF(cufe: string): Promise<DescargaPDFResponse> {
+  async descargaPDF(datos: DatosDocumento): Promise<DescargaPDFResponse> {
     const envelope = SoapEnvelopeBuilder.buildDescargaPDF(
       this.config.tokenEmpresa,
       this.config.tokenPassword,
-      cufe
+      datos
     );
 
     const data = await this.postSoapAction('DescargaPDF', envelope);
@@ -132,11 +133,11 @@ export class HkaClient {
     };
   }
 
-  async descargaXML(cufe: string): Promise<DescargaXMLResponse> {
+  async descargaXML(datos: DatosDocumento): Promise<DescargaXMLResponse> {
     const envelope = SoapEnvelopeBuilder.buildDescargaXML(
       this.config.tokenEmpresa,
       this.config.tokenPassword,
-      cufe
+      datos
     );
 
     const data = await this.postSoapAction('DescargaXML', envelope);
@@ -169,12 +170,12 @@ export class HkaClient {
     };
   }
 
-  async envioCorreo(cufe: string, correos: string): Promise<EnvioCorreoResponse> {
+  async envioCorreo(datos: DatosDocumento, correo: string): Promise<EnvioCorreoResponse> {
     const envelope = SoapEnvelopeBuilder.buildEnvioCorreo(
       this.config.tokenEmpresa,
       this.config.tokenPassword,
-      cufe,
-      correos
+      datos,
+      correo
     );
 
     const data = await this.postSoapAction('EnvioCorreo', envelope);
@@ -199,7 +200,12 @@ export class HkaClient {
       codigo: SoapParser.extractTag(data, 'codigo') || '',
       resultado: SoapParser.extractTag(data, 'resultado') || '',
       mensaje: SoapParser.extractTag(data, 'mensaje') || '',
-      eventosCorreo: (SoapParser.extractList(data, 'eventosCorreo', 'evento', ['fecha', 'estatus', 'mensaje']) as Array<{ fecha: string; estatus: string; mensaje: string }>) || [],
+      listaRastreo: (SoapParser.extractList(
+        data,
+        'listaRastreo',
+        'listTracking',
+        ['correo', 'creado_en', 'estado', 'messageId']
+      ) as Array<{ correo: string; creado_en: string; estado: string; messageId: string }>) || [],
     };
   }
 

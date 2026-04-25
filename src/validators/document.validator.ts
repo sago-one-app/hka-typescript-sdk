@@ -37,8 +37,8 @@ export class DocumentValidator {
 
     // Regla 4.2.A/B/C - Destino y País
     if (trx.destinoOperacion === '1') {
-      // Panamá interno
-      if (trx.cliente.pais && trx.cliente.pais !== 'PA') {
+      // Panamá interno — excepción: clientes Extranjero (04) pueden tener pais != PA
+      if (trx.cliente.pais && trx.cliente.pais !== 'PA' && trx.cliente.tipoClienteFE !== '04') {
         throw new Error(`Si destinoOperacion="1" (Panamá), el país del cliente debe ser "PA".`);
       }
     } else if (trx.destinoOperacion === '2') {

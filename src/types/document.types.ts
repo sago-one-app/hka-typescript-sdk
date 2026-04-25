@@ -12,7 +12,7 @@ import { TotalesSubTotalesSchema } from './totals.types';
 
 export const DocFiscalReferenciadoSchema = z.object({
   fechaEmisionDocFiscalReferenciado: z.string(), // ISO date with timezone
-  cufeFEReferenciada: z.string().length(66),
+  cufeFEReferenciada: z.string().length(66).optional(), // Requerido solo para tipoDocumento 04/05; omitir en notas genéricas (06/07)
   nroFacturaPapel: z.string().optional(),
   nroFacturaIF: z.string().optional(),
 });
