@@ -6,6 +6,16 @@ export class DocumentValidator {
   static validate(doc: DocumentoElectronico): void {
     const trx = doc.datosTransaccion;
 
+    // Regla: fechaEmision debe tener timezone explícito (no 'Z')
+    if (trx.fechaEmision) {
+      if (!trx.fechaEmision.match(/T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/)) {
+        throw new Error(
+          `fechaEmision debe incluir timezone explícito como "-05:00" (no se acepta "Z"). ` +
+          `Se recibió: "${trx.fechaEmision}".`
+        );
+      }
+    }
+
     // Regla: Padding numeroDocumentoFiscal
     if (!/^\d{10}$/.test(trx.numeroDocumentoFiscal)) {
       throw new Error(`numeroDocumentoFiscal debe tener 10 dígitos paddeados con ceros.`);

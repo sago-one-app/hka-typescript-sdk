@@ -24,3 +24,14 @@ export class HkaError extends Error {
     return err instanceof HkaError;
   }
 }
+
+/** HKA WS response codes */
+export const HKA_CODES = {
+  SUCCESS:    '200',
+  DUPLICATE:  '102',
+  NO_FOLIOS:  '119',
+  RESEND:     '300',
+} as const;
+
+export type HkaCode = typeof HKA_CODES[keyof typeof HKA_CODES];
+
