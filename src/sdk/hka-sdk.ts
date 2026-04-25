@@ -6,6 +6,7 @@ import { DocumentValidator } from '../validators/document.validator';
 import { TotalsValidator } from '../validators/totals.validator';
 import { ContingencyValidator } from '../validators/contingency.validator';
 import { AnulacionValidator } from '../validators/anulacion.validator';
+import { NotaReferenciadaValidator } from '../validators/nota-referenciada.validator';
 import { ItbmsCalculator } from '../calculators/itbms.calculator';
 import { TotalsCalculator } from '../calculators/totals.calculator';
 import { DocumentoElectronicoSchema } from '../types/document.types';
@@ -16,6 +17,8 @@ import type { FormaPago, PagoPlazo, Retencion, DescuentoBonificacion, TotalesSub
 import type { RastreoCorreoResponse } from '../types/response.types';
 import { PAYMENT_TIMES } from '../catalogs/payment-times';
 import { DOCUMENT_TYPES } from '../catalogs/document-types';
+import { NATURE_OPERATIONS } from '../catalogs/nature-operations';
+import { OPERATION_DESTINATIONS } from '../catalogs/operation-destinations';
 import { HKA_ENDPOINTS, type HkaEnvironment } from './environments';
 import { HkaError } from './errors';
 import type {
@@ -85,22 +88,41 @@ export class HkaSdk {
   }
 
   async emitirFacturaImportacion(input: FacturaImportacionInput): Promise<EmisionResult> {
-    return this.orquestar(input, DOCUMENT_TYPES.FACTURA_IMPORTACION);
+    return this.orquestar(
+      { ...input, naturalezaOperacion: NATURE_OPERATIONS.IMPORTACION } as BaseEmisionInput,
+      DOCUMENT_TYPES.FACTURA_IMPORTACION,
+    );
   }
 
   async emitirFacturaExportacion(input: FacturaExportacionInput): Promise<EmisionResult> {
-    return this.orquestar(input, DOCUMENT_TYPES.FACTURA_EXPORTACION, {
-      datosFacturaExportacion: input.datosFacturaExportacion,
-    });
+    return this.orquestar(
+      { ...input, destinoOperacion: OPERATION_DESTINATIONS.EXTRANJERO } as BaseEmisionInput,
+      DOCUMENT_TYPES.FACTURA_EXPORTACION,
+      { datosFacturaExportacion: input.datosFacturaExportacion },
+    );
   }
 
   async emitirNotaCreditoReferenciada(input: NotaCreditoReferenciadaInput): Promise<EmisionResult> {
+    try {
+      for (const ref of input.docFiscalReferenciado) {
+        NotaReferenciadaValidator.validatePlazo(ref.fechaEmisionDocFiscalReferenciado);
+      }
+    } catch (err) {
+      throw new HkaError('VALIDATION', (err as Error).message, { cause: err });
+    }
     return this.orquestar(input, DOCUMENT_TYPES.NOTA_CREDITO_REFERENTE_FE, {
       docFiscalReferenciado: input.docFiscalReferenciado,
     });
   }
 
   async emitirNotaDebitoReferenciada(input: NotaDebitoReferenciadaInput): Promise<EmisionResult> {
+    try {
+      for (const ref of input.docFiscalReferenciado) {
+        NotaReferenciadaValidator.validatePlazo(ref.fechaEmisionDocFiscalReferenciado);
+      }
+    } catch (err) {
+      throw new HkaError('VALIDATION', (err as Error).message, { cause: err });
+    }
     return this.orquestar(input, DOCUMENT_TYPES.NOTA_DEBITO_REFERENTE_FE, {
       docFiscalReferenciado: input.docFiscalReferenciado,
     });

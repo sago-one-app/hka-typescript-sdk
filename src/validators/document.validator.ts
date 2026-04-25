@@ -1,5 +1,6 @@
 import { DocumentoElectronico } from '../types/document.types';
 import { DOCUMENT_TYPES } from '../catalogs/document-types';
+import { NATURE_OPERATIONS } from '../catalogs/nature-operations';
 
 export class DocumentValidator {
   static validate(doc: DocumentoElectronico): void {
@@ -35,6 +36,37 @@ export class DocumentValidator {
       }
     }
 
+    // Regla específica tipo 02 — Importación
+    if (trx.tipoDocumento === DOCUMENT_TYPES.FACTURA_IMPORTACION) {
+      if (trx.naturalezaOperacion !== NATURE_OPERATIONS.IMPORTACION) {
+        throw new Error(
+          `Para Factura de Importación (02), naturalezaOperacion DEBE ser "${NATURE_OPERATIONS.IMPORTACION}" (Importación). ` +
+          `Se recibió "${trx.naturalezaOperacion}".`
+        );
+      }
+    }
+
+    // Regla específica tipo 03 — Exportación
+    if (trx.tipoDocumento === DOCUMENT_TYPES.FACTURA_EXPORTACION) {
+      if (trx.destinoOperacion !== '2') {
+        throw new Error(
+          `Para Factura de Exportación (03), destinoOperacion DEBE ser "2" (Extranjero). ` +
+          `Se recibió "${trx.destinoOperacion}".`
+        );
+      }
+    }
+
+    // Regla específica tipo 10 — Operación Extranjera (NO es exportación)
+    if (trx.tipoDocumento === DOCUMENT_TYPES.FACTURA_OPERACION_EXTRANJERA) {
+      if (doc.datosFacturaExportacion) {
+        throw new Error(
+          `Para Factura de Operación Extranjera (10), no se debe incluir 'datosFacturaExportacion'. ` +
+          `Este tipo de documento representa transacciones internacionales que no son exportaciones ` +
+          `tradicionales. Si necesita documentar una exportación, use el tipo 03.`
+        );
+      }
+    }
+
     // Regla 4.2.A/B/C - Destino y País
     if (trx.destinoOperacion === '1') {
       // Panamá interno — excepción: clientes Extranjero (04) pueden tener pais != PA
@@ -42,11 +74,14 @@ export class DocumentValidator {
         throw new Error(`Si destinoOperacion="1" (Panamá), el país del cliente debe ser "PA".`);
       }
     } else if (trx.destinoOperacion === '2') {
-      // Extranjero
+      // Extranjero — tipo 10 es excepción: puede ser destinoOperacion='2' sin datosFacturaExportacion
       if (trx.cliente.pais === 'PA') {
         throw new Error(`Si destinoOperacion="2" (Extranjero), el país del cliente no puede ser "PA".`);
       }
-      if (!doc.datosFacturaExportacion) {
+      if (
+        !doc.datosFacturaExportacion &&
+        trx.tipoDocumento !== DOCUMENT_TYPES.FACTURA_OPERACION_EXTRANJERA
+      ) {
         throw new Error(`Si destinoOperacion="2", la sección 'datosFacturaExportacion' es obligatoria.`);
       }
     }

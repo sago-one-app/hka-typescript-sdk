@@ -223,7 +223,7 @@ describe('HkaSdk — emitirNotaCreditoReferenciada', () => {
     const input: NotaCreditoReferenciadaInput = {
       ...baseFacturaInput(),
       docFiscalReferenciado: [{
-        fechaEmisionDocFiscalReferenciado: '2023-01-01T10:00:00-05:00',
+        fechaEmisionDocFiscalReferenciado: '2026-01-15T10:00:00-05:00',
         cufeFEReferenciada: cufeFE,
       }],
     };
@@ -242,7 +242,7 @@ describe('HkaSdk — emitirNotaCreditoReferenciada', () => {
     const input: NotaCreditoReferenciadaInput = {
       ...baseFacturaInput(),
       docFiscalReferenciado: [{
-        fechaEmisionDocFiscalReferenciado: '2023-01-01T10:00:00-05:00',
+        fechaEmisionDocFiscalReferenciado: '2026-01-15T10:00:00-05:00',
         cufeFEReferenciada: 'CUFE_CORTO',
       }],
     };

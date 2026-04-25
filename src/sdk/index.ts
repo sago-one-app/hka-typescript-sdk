@@ -40,4 +40,5 @@ export type {
   NotaCreditoGenericaInput,
   NotaDebitoGenericaInput,
   DocFiscalReferenciadoInput,
+  DocFiscalGenericaInput,
 } from './inputs/nota.input';
