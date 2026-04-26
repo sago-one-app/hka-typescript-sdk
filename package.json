@@ -1,21 +1,45 @@
 {
   "name": "hka-sdk-typescripts",
-  "version": "1.0.0",
-  "description": "SDK en TypeScript para integración con The Factory HKA (Panamá)",
+  "version": "1.1.0",
+  "description": "SDK en TypeScript para integración con The Factory HKA — Facturación Electrónica (FEL) Panamá",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "LICENSE",
+    "README.md"
   ],
   "scripts": {
     "build": "tsc",
     "test": "jest",
     "prepublishOnly": "npm run build"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "hka",
+    "the-factory-hka",
+    "facturacion-electronica",
+    "fel",
+    "panama",
+    "dgi",
+    "soap",
+    "efactura",
+    "comprobante-electronico",
+    "typescript"
+  ],
+  "author": "Sago One",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sago-one-app/hka-typescript-sdk.git"
+  },
+  "homepage": "https://github.com/sago-one-app/hka-typescript-sdk#readme",
+  "bugs": {
+    "url": "https://github.com/sago-one-app/hka-typescript-sdk/issues"
+  },
+  "engines": {
+    "node": ">=16"
+  },
   "type": "commonjs",
   "dependencies": {
     "axios": "^1.15.2",
