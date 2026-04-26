@@ -19,8 +19,9 @@ import { PAYMENT_TIMES } from '../catalogs/payment-times';
 import { DOCUMENT_TYPES } from '../catalogs/document-types';
 import { NATURE_OPERATIONS } from '../catalogs/nature-operations';
 import { OPERATION_DESTINATIONS } from '../catalogs/operation-destinations';
+import { ITBMS_RATES } from '../catalogs/itbms-rates';
 import { HKA_ENDPOINTS, type HkaEnvironment } from './environments';
-import { HkaError, HKA_CODES } from './errors';
+import { HkaError, HKA_CODES, HKA_CODE_DESCRIPTIONS } from './errors';
 import type {
   EmisionResult,
   AnulacionResult,
@@ -363,13 +364,8 @@ export class HkaSdk {
 
     // 8. Verificar respuesta
     if (response.codigo !== HKA_CODES.SUCCESS) {
-      const msg = response.codigo === HKA_CODES.DUPLICATE
-        ? `Documento duplicado: ${response.mensaje}`
-        : response.codigo === HKA_CODES.NO_FOLIOS
-          ? `Sin folios disponibles: ${response.mensaje}`
-          : response.codigo === HKA_CODES.RESEND
-            ? `Se requiere reenvío (código 300): ${response.mensaje}`
-            : response.mensaje;
+      const descripcion = HKA_CODE_DESCRIPTIONS[response.codigo] ?? `Error HKA código ${response.codigo}`;
+      const msg = `[${response.codigo}] ${descripcion}: ${response.mensaje}`;
       throw new HkaError('API', msg, { codigoHka: response.codigo });
     }
 
@@ -391,19 +387,24 @@ export class HkaSdk {
   private completarItems(items: ItemInput[]): Item[] {
     return items.map((item) => {
       const precioItem = parseFloat(item.precioItem);
+
+      // Ítems de precio cero deben declararse como exentos (tasaITBMS='00')
+      const tasaEfectiva = precioItem === 0 ? ITBMS_RATES.EXENTO : item.tasaITBMS;
+
       const valorITBMS = item.valorITBMS !== undefined
         ? item.valorITBMS
-        : ItbmsCalculator.calculateItemItbms(item.tasaITBMS, precioItem).toFixed(6);
+        : ItbmsCalculator.calculateItemItbms(tasaEfectiva, precioItem).toFixed(6);
 
       const acarreo = parseFloat(item.precioAcarreo ?? '0');
-      const seguro = parseFloat(item.precioSeguro ?? '0');
-      const isc = parseFloat(item.valorISC ?? '0');
+      const seguro  = parseFloat(item.precioSeguro  ?? '0');
+      const isc     = parseFloat(item.valorISC      ?? '0');
       const valorTotal = item.valorTotal !== undefined
         ? item.valorTotal
         : (precioItem + parseFloat(valorITBMS) + acarreo + seguro + isc).toFixed(6);
 
       return {
         ...item,
+        tasaITBMS: tasaEfectiva,
         valorITBMS,
         valorTotal,
       } as Item;
