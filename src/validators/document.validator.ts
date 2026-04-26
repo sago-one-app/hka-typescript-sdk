@@ -6,6 +6,13 @@ export class DocumentValidator {
   static validate(doc: DocumentoElectronico): void {
     const trx = doc.datosTransaccion;
 
+    // DGI limita a 1000 líneas por documento FEL
+    if (doc.listaItems.length > 1000) {
+      throw new Error(
+        `Un documento FEL no puede contener más de 1000 ítems. Se recibieron ${doc.listaItems.length}.`
+      );
+    }
+
     // Regla: fechaEmision debe tener timezone explícito (no 'Z')
     if (trx.fechaEmision) {
       if (!trx.fechaEmision.match(/T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/)) {

@@ -82,6 +82,15 @@ export interface ClienteGobiernoInput {
 
 export interface ClienteExtranjeroInput {
   tipoClienteFE: '04';
+  // Campos explícitamente prohibidos para Extranjero (DGI regla 4.1.B)
+  tipoContribuyente?: never;
+  numeroRUC?: never;
+  digitoVerificadorRUC?: never;
+  codigoUbicacion?: never;
+  provincia?: never;
+  distrito?: never;
+  corregimiento?: never;
+  // Campos propios del cliente extranjero
   tipoIdentificacion: IdentificationType;
   nroIdentificacionExtranjero: string;
   razonSocial?: string;

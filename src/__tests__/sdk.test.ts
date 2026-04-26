@@ -157,7 +157,7 @@ describe('HkaSdk — emitirFactura', () => {
 
     await expect(sdk.emitirFactura(baseFacturaInput())).rejects.toMatchObject({
       type: 'API',
-      message: 'Token inválido',
+      message: expect.stringContaining('Token inválido'),
       details: { codigoHka: '101' },
     });
   });

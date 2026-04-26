@@ -41,7 +41,7 @@ export const DatosTransaccionSchema = z.object({
   envioContenedor: z.string().default('1'), // 1=Normal, 2=Receptor exceptúa
   procesoGeneracion: z.string().default('1'),
   tipoVenta: z.nativeEnum(SALE_TYPES).optional(), // Omit if not sale
-  informacionInteres: z.string().optional(),
+  informacionInteres: z.string().max(500).optional(),
   cliente: ClienteSchema,
 });
 

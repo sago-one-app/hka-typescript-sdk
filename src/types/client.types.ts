@@ -23,7 +23,7 @@ export const ClienteSchema = z.object({
   correo1: z.string().email().optional(),
   correo2: z.string().email().optional(),
   pais: z.string().length(2),
-  paisOtro: z.string().optional(),
+  paisOtro: z.string().min(2).max(100).optional(),
 });
 
 export type Cliente = z.infer<typeof ClienteSchema>;
