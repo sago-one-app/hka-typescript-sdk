@@ -113,6 +113,16 @@ export class DocumentValidator {
       throw new Error(`No se puede informar 'precioSeguro' en ítems y 'valorSeguroCobrado' en totales simultáneamente.`);
     }
 
+    // Regla 4.5 - formaPagoFact="99" requiere descFormaPago
+    for (let i = 0; i < tot.listaFormaPago.length; i++) {
+      const pago = tot.listaFormaPago[i];
+      if (pago.formaPagoFact === '99' && !pago.descFormaPago) {
+        throw new Error(
+          `La forma de pago "99" (Otro) en posición ${i + 1} requiere el campo 'descFormaPago'.`
+        );
+      }
+    }
+
     // Regla 4.6.B - Pago a plazo (tiempoPago 2=Plazo, 3=Mixto)
     if (tot.tiempoPago === '2' || tot.tiempoPago === '3') {
       if (!tot.listaPagoPlazo || tot.listaPagoPlazo.length === 0) {

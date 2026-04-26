@@ -110,6 +110,23 @@ export interface MedicinaInput {
   cantProductosLote: number;
 }
 
+export interface VehiculoInput {
+  modalidadOperacionVenta: string;
+  /** Exactamente 17 caracteres */
+  chasis: string;
+  marca?: string;
+  modelo?: string;
+  potenciaMotor: string;
+  tipoCombustible: string;
+  numeroMotor: string;
+  capacidadPasajeros?: number;
+  tipoVehiculo: string;
+  usoVehiculo: string;
+  tonelaje?: string;
+  color?: string;
+  year?: number;
+}
+
 export interface ItemInput {
   descripcion: string;
   codigo?: string;
@@ -133,6 +150,7 @@ export interface ItemInput {
   valorISC?: string;
   codigoGTIN?: string;
   medicina?: MedicinaInput;
+  vehiculo?: VehiculoInput;
   listaItemOTI?: OtiItemInput[];
 }
 
