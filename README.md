@@ -2,7 +2,7 @@
 
 SDK oficial en TypeScript para la integración con los servicios web de **Facturación Electrónica (FEL)** de [The Factory HKA](https://www.thefactoryhka.com.pa/) en Panamá.
 
-[![npm](https://img.shields.io/npm/v/hka-sdk-typescripts)](https://www.npmjs.com/package/hka-sdk-typescripts)
+[![GitHub Packages](https://img.shields.io/badge/GitHub%20Packages-%40sago--one--app%2Fhka--sdk--typescripts-blue)](https://github.com/sago-one-app/hka-typescript-sdk/pkgs/npm/hka-sdk-typescripts)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D16-green)](https://nodejs.org/)
 
@@ -54,12 +54,26 @@ SDK oficial en TypeScript para la integración con los servicios web de **Factur
 
 ## Instalación
 
+Este paquete se publica en **GitHub Packages**. Necesitas autenticarte antes de instalarlo.
+
+**1. Configura tu `.npmrc`** (una sola vez por máquina o por proyecto):
+
 ```bash
-npm install hka-sdk-typescripts
+# ~/.npmrc  o  .npmrc en la raíz de tu proyecto
+@sago-one-app:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=TU_GITHUB_TOKEN
+```
+
+> Necesitas un [GitHub Personal Access Token](https://github.com/settings/tokens) con el scope `read:packages`.
+
+**2. Instala el paquete:**
+
+```bash
+npm install @sago-one-app/hka-sdk-typescripts
 # o
-pnpm add hka-sdk-typescripts
+pnpm add @sago-one-app/hka-sdk-typescripts
 # o
-yarn add hka-sdk-typescripts
+yarn add @sago-one-app/hka-sdk-typescripts
 ```
 
 ---
@@ -69,7 +83,7 @@ yarn add hka-sdk-typescripts
 ```typescript
 import { HkaSdk, EMISSION_TYPES, NATURE_OPERATIONS, OPERATION_TYPES,
          OPERATION_DESTINATIONS, CAFE_FORMATS, CLIENT_TYPES,
-         CONTRIBUTOR_TYPES, ITBMS_RATES, PAYMENT_METHODS } from 'hka-sdk-typescripts';
+         CONTRIBUTOR_TYPES, ITBMS_RATES, PAYMENT_METHODS } from '@sago-one-app/hka-sdk-typescripts';
 
 const sdk = new HkaSdk({
   environment: 'demo',                        // 'demo' | 'production'
@@ -121,7 +135,7 @@ console.log('Protocolo:', resultado.nroProtocoloAutorizacion);
 ## Configuración
 
 ```typescript
-import { HkaSdk, HkaSdkConfig } from 'hka-sdk-typescripts';
+import { HkaSdk, HkaSdkConfig } from '@sago-one-app/hka-sdk-typescripts';
 
 const config: HkaSdkConfig = {
   environment: 'production',          // Cambia a 'production' cuando estés listo
@@ -320,7 +334,7 @@ const resultado = await sdk.emitirFactura({
 Todos los métodos de gestión reciben un objeto `DatosDocumento` que identifica el documento:
 
 ```typescript
-import { DatosDocumento, DOCUMENT_TYPES, EMISSION_TYPES } from 'hka-sdk-typescripts';
+import { DatosDocumento, DOCUMENT_TYPES, EMISSION_TYPES } from '@sago-one-app/hka-sdk-typescripts';
 
 const datos: DatosDocumento = {
   codigoSucursalEmisor: '0000',
@@ -402,7 +416,7 @@ Todos los métodos del SDK lanzan `HkaError` en caso de fallo. El error tiene tr
 | `NETWORK` | Error de red o timeout al contactar el WS |
 
 ```typescript
-import { HkaError } from 'hka-sdk-typescripts';
+import { HkaError } from '@sago-one-app/hka-sdk-typescripts';
 
 try {
   const resultado = await sdk.emitirFactura(input);
@@ -465,7 +479,7 @@ import {
   SALE_TYPES,               // Tipos de venta
   RETENTION_CODES,          // Códigos de retención
   OTI_CODES,                // Códigos OTI
-} from 'hka-sdk-typescripts';
+} from '@sago-one-app/hka-sdk-typescripts';
 ```
 
 Ejemplo de uso de catálogos:
@@ -498,7 +512,7 @@ import {
   ClientValidator,
   DocumentValidator,
   TotalsValidator,
-} from 'hka-sdk-typescripts';
+} from '@sago-one-app/hka-sdk-typescripts';
 
 // 1. Cliente SOAP
 const client = new HkaClient({
